@@ -9,5 +9,6 @@ import (
 
 func AddFlagsRoutes(app fiber.Router) {
 	app.Get("/flags", handlers.HandleFlags)
-	app.Post("/flags", handlers.HandleFlagsSubmit)
+	app.Post("/flags", handlers.HandleFlagsAdd)
+	app.Post("/flags/submit", handlers.HandleFlagsSubmit)
 }
