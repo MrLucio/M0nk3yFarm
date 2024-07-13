@@ -6,10 +6,11 @@ import (
 )
 
 func AddRoutes(app *fiber.App) {
-	app.Get("/", handlers.HandleIndex)
+	api := app.Group("/api")
+	auth := api.Group("", handlers.HandleAuth)
 
 	// Add Flags routes
-	AddFlagsRoutes(app)
+	AddFlagsRoutes(auth)
 
 	// Add Swagger routes
 	AddSwaggerRoutes(app)

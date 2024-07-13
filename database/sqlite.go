@@ -22,25 +22,8 @@ func Start() error {
 		return err
 	}
 
-	// insert
+	// Insert dummy flags
 	insertFlags()
-
-	// rows, err := db.Query("SELECT * FROM users")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer rows.Close()
-
-	// for rows.Next() {
-	// 	var id int
-	// 	var name string
-	// 	var age int
-	// 	err = rows.Scan(&id, &name, &age)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	log.Printf("ID: %d, Name: %s, Age: %d\n", id, name, age)
-	// }
 
 	return nil
 }

@@ -7,7 +7,7 @@ import (
 	_ "github.com/MrLucio/M0nk3yFarm/docs"
 )
 
-func AddFlagsRoutes(app *fiber.App) {
+func AddFlagsRoutes(app fiber.Router) {
 	app.Get("/flags", handlers.HandleFlags)
 	app.Post("/flags", handlers.HandleFlagsSubmit)
 }

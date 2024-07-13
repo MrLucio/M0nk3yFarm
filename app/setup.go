@@ -8,6 +8,7 @@ import (
 	"github.com/MrLucio/M0nk3yFarm/router"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func Setup() error {
@@ -30,7 +31,7 @@ func Setup() error {
 	}))
 
 	// Setup the recover middleware
-	//app.Use(recover.New())
+	app.Use(recover.New())
 
 	// Setup the router
 	router.AddRoutes(app)

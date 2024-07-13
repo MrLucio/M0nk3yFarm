@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/MrLucio/M0nk3yFarm/database"
-	"github.com/MrLucio/M0nk3yFarm/models"
+	"github.com/MrLucio/M0nk3yFarm/structs"
 	"github.com/MrLucio/M0nk3yFarm/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,16 +19,16 @@ import (
 // @Success 200 {string} string "flags"
 // @Router / [get]
 func HandleFlags(c *fiber.Ctx) error {
-	rows, err := database.Db.Query("SELECT * FROM flags")
+	rows, err := database.Db.Query("SELECT * FROM flags LIMIT 10")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
-	var flags []models.Flag
+	var flags []structs.Flag
 
 	for rows.Next() {
-		var flag models.Flag
+		var flag structs.Flag
 		err = rows.Scan(&flag.Flag, &flag.Sploit, &flag.Team, &flag.Time, &flag.Status)
 		if err != nil {
 			log.Fatal(err)
@@ -47,7 +47,7 @@ func HandleFlags(c *fiber.Ctx) error {
 // @Success 200 {string} string "flags"
 // @Router / [get]
 func HandleFlagsSubmit(c *fiber.Ctx) error {
-	flag := &models.Flag{
+	flag := &structs.Flag{
 		Flag:   c.Query("flag"),
 		Sploit: c.Query("sploit"),
 	}
