@@ -19,14 +19,15 @@ type Config struct {
 	PersonalToken string
 
 	// Tick & Time
-	Timezone     string
 	TickDuration int
 	TickStart    time.Time
 	TickEnd      time.Time
 
 	// Flag
-	FlagFormat    *regexp.Regexp
-	FlagBulkLimit int
+	FlagFormat         *regexp.Regexp
+	FlagBulkLimit      int
+	FlagSubmitInterval int
+	FlagLifetime       int
 
 	// Server
 	URL string

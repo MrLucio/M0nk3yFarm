@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/MrLucio/M0nk3yFarm/structs"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func GetTeams(Config structs.Config) []structs.Team {
@@ -27,7 +28,17 @@ func GetTeams(Config structs.Config) []structs.Team {
 	return teams
 }
 
-func ParseTime(date string) time.Time {
-	t, _ := time.Parse("2006-01-02T15:04Z0700", date)
+func ParseTime(date string, timezone string) time.Time {
+	t, _ := time.Parse("2006-01-02T15:04", date)
+
+	loc, err := time.LoadLocation(timezone)
+
+	if err != nil {
+		log.Fatal("Error parsing timezone: ", timezone)
+		return time.Time{}
+	}
+
+	t = t.In(loc)
+
 	return t
 }

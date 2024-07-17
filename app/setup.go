@@ -2,10 +2,16 @@ package app
 
 import (
 	"os"
+	"sync"
 
+	"github.com/MrLucio/M0nk3yFarm/app/athena"
+	"github.com/MrLucio/M0nk3yFarm/app/hermes"
 	"github.com/MrLucio/M0nk3yFarm/config"
 	"github.com/MrLucio/M0nk3yFarm/database"
 	"github.com/MrLucio/M0nk3yFarm/router"
+	"github.com/MrLucio/M0nk3yFarm/structs"
+	"github.com/MrLucio/M0nk3yFarm/structs/semaphore"
+	stack "github.com/MrLucio/M0nk3yFarm/structs/stack"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -30,6 +36,9 @@ func Setup() error {
 		Format: "[${ip}:${port}] ${status} - ${method} ${path} ${latency}\n",
 	}))
 
+	// Start Hermes & Athena
+	SetupWorkers()
+
 	// Setup the recover middleware
 	app.Use(recover.New())
 
@@ -40,4 +49,12 @@ func Setup() error {
 	app.Listen(":" + os.Getenv("PORT"))
 
 	return nil
+}
+
+func SetupWorkers() {
+	mu := sync.Mutex{}
+	syncList := stack.SyncStack[structs.Flag]{}
+	sem := semaphore.New(0)
+	go hermes.Setup(&mu, sem, &syncList)
+	go athena.Setup(&mu, sem, &syncList)
 }

@@ -19,14 +19,20 @@ var Config = structs.Config{
 	PersonalToken: "ccitad",
 
 	// Tick & Time
-	Timezone:     "Europe/Rome",
-	TickDuration: 120, // 2 minutes
-	TickStart:    utils.ParseTime("2024-06-21T10:00+0200"),
-	TickEnd:      utils.ParseTime("2024-06-21T18:00+0200"),
+	TickDuration: 120,                                                // Seconds
+	TickStart:    utils.ParseTime("2024-06-21T10:00", "Europe/Rome"), // UTC Time and Timezone
+	TickEnd:      utils.ParseTime("2024-06-21T18:00", "Europe/Rome"), // UTC Time and Timezone
 
 	// Flag
-	FlagFormat:    regexp.MustCompile(`[A-Z0-9]{31}=`),
-	FlagBulkLimit: 15,
+	/*
+		The server will submit maximum FlagBulkLimit flags
+		every FlagSubmitInterval seconds.
+		Flags will be ignored after FlagLifetime minutes.
+	*/
+	FlagFormat:         regexp.MustCompile(`[A-Z0-9]{31}=`), // Flag parsing regex
+	FlagBulkLimit:      15,                                  // Maximum number of flags to submit in a single request
+	FlagSubmitInterval: 10,                                  // Seconds between flag submissions
+	FlagLifetime:       5 * 120,                             // Minutes of lifetime of a flag
 
 	// Server
 	URL: "http://10.10.0.1:8080/flags",

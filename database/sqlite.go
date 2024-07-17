@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"math/rand"
 
+	config "github.com/MrLucio/M0nk3yFarm/config/constants"
 	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
 )
 
@@ -11,13 +12,13 @@ var Db *sql.DB = nil
 
 func Start() error {
 	var err error
-	Db, err = sql.Open("sqlite3", "db.db")
+	Db, err = sql.Open("sqlite3", config.SQLPath)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = Db.Exec("CREATE TABLE IF NOT EXISTS flags (flag TEXT NOT NULL PRIMARY KEY, sploit TEXT, team TEXT DEFAULT \"\", time INTEGER DEFAULT 0, status TEXT DEFAULT \"store1\")")
+	_, err = Db.Exec(config.SQLCreateTable)
 	if err != nil {
 		return err
 	}

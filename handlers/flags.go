@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/MrLucio/M0nk3yFarm/config"
+	constants "github.com/MrLucio/M0nk3yFarm/config/constants"
 	"github.com/MrLucio/M0nk3yFarm/database"
 	"github.com/MrLucio/M0nk3yFarm/structs"
 	"github.com/MrLucio/M0nk3yFarm/utils"
@@ -54,6 +55,7 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 	}
 
 	database.Db.Exec("INSERT INTO flags (flag, sploit) VALUES (?, ?)", flag.Flag, flag.Sploit)
+	constants.FlagChannel <- flag
 
 	return c.JSON(flag)
 }
