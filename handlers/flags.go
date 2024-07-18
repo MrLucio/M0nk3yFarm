@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"github.com/MrLucio/M0nk3yFarm/app/hermes"
 	"github.com/MrLucio/M0nk3yFarm/database"
 	"github.com/MrLucio/M0nk3yFarm/structs"
@@ -10,13 +8,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary flags
-// @Description flags
-// @Tags flags
-// @Accept json
+// @Summary Get last 100 flags
+// @Tags Flags
 // @Produce json
-// @Success 200 {string} string "flags"
-// @Router / [get]
+// @Success 200 {object} []structs.Flag "Flags"
+// @Security		BasicAuth
+// @Router /flags [get]
 func HandleFlags(c *fiber.Ctx) error {
 	pagination := structs.Pagination{
 		Page:    0,
@@ -30,19 +27,24 @@ func HandleFlags(c *fiber.Ctx) error {
 	return c.JSON(flags)
 }
 
-// @Summary flags
-// @Description flags
-// @Tags flags
+// @Summary Add flags
+// @Tags Flags
 // @Accept json
+// @Param flags body []structs.Flag true "Flags to add"
 // @Produce json
-// @Success 200 {string} string "flags"
-// @Router / [post]
+// @Success 204
+// @Failure 400
+// @Security		BasicAuth
+// @Router /flags [post]
 func HandleFlagsAdd(c *fiber.Ctx) error {
 	flags := new(structs.Flags)
-	err := c.BodyParser(flags)
-	if err != nil {
-		fmt.Println(err)
-		return err
+
+	if err := c.BodyParser(&flags); err != nil || len(flags.Flags) == 0 {
+		return c.SendStatus(400)
+	}
+
+	if errs := utils.Validate(flags); len(errs) > 0 {
+		return c.SendStatus(400)
 	}
 
 	parameters := make([]interface{}, len(flags.Flags)*4)
@@ -66,11 +68,20 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 		hermes.Hermes.EnqueueFlag(flag)
 	}
 
-	return c.JSON(flags)
+	return c.SendStatus(204)
 }
 
+// @Summary Submit flags
+// @Tags Flags
+// @Produce json
+// @Success 204
+// @Failure 424
+// @Security		BasicAuth
+// @Router /flags/submit [post]
 func HandleFlagsSubmit(c *fiber.Ctx) error {
-	hermes.Hermes.SubmitFlags()
+	if err := hermes.Hermes.SubmitFlags(); err != nil {
+		return c.SendStatus(424)
+	}
 
-	return c.SendString("OK")
+	return c.SendStatus(204)
 }

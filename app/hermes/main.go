@@ -1,6 +1,7 @@
 package hermes
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/MrLucio/M0nk3yFarm/config"
@@ -32,12 +33,14 @@ func New(
 	return Hermes
 }
 
-func (h *hermes) SubmitFlags() {
+func (h *hermes) SubmitFlags() error {
 	if h.localStack.Len() == 0 {
-		return
+		return fmt.Errorf("no flags to submit")
 	}
 	h.localStack.Clear()
 	h.sem.Release()
+
+	return nil
 }
 
 func (h *hermes) EnqueueFlag(flag structs.Flag) {

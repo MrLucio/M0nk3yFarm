@@ -8,5 +8,7 @@ import (
 )
 
 func AddSwaggerRoutes(app *fiber.App) {
-	app.Get("/swagger/*", swagger.HandlerDefault)
+	app.Get("/docs/*", swagger.New(swagger.Config{
+		CustomStyle: " ",
+	}))
 }

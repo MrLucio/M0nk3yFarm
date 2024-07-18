@@ -12,7 +12,7 @@ type Flag struct {
 }
 
 type Flags struct {
-	Flags []Flag `json:"flags"`
+	Flags []Flag `json:"flags" validate:"required,dive,required"`
 }
 
 type FlagFilter struct {

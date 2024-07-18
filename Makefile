@@ -1,5 +1,5 @@
 dev:
 	air
 
-swagger:
+doc:
 	swag init --dir ./,./handlers

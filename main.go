@@ -8,10 +8,16 @@ import (
 
 // @title M0nk3yFarm
 // @version 1.0
-// @description
-// @contact.name Luciano Mateias
+// @termsOfService  http://swagger.io/terms/
+
 // @license.name MIT
-// @BasePath /
+// @license.url https://github.com/MrLucio/M0nk3yFarm/blob/main/LICENSE
+
+// @BasePath /api
+
+// @securityDefinitions.basic  BasicAuth
+
+// @Schemes https http
 func main() {
 	// Setup and run the app
 	err := app.Setup()
