@@ -27,7 +27,7 @@ func (s *SyncStack[T]) Push(value T) T {
 	defer s.mu.Unlock()
 
 	read := s.loadReadOnly()
-	stack, value := read.s.Push(&value)
+	stack, value := read.s.Push(value)
 	s.read.Store(&readOnly[T]{s: stack})
 
 	return value

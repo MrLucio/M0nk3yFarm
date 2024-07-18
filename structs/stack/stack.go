@@ -61,17 +61,23 @@ func (s *Stack[T]) PopMany(n int) (*Stack[T], []T) {
 }
 
 // Push a value onto the top of the stack
-func (s *Stack[T]) Push(value *T) (*Stack[T], T) {
-	n := &node[T]{*value, s.top}
+func (s *Stack[T]) Push(value T) (*Stack[T], T) {
+	n := &node[T]{value, s.top}
 	s.top = n
 	s.length++
 
-	return s, *value
+	return s, value
 }
 
 func (s *Stack[T]) PushMany(values []T) *Stack[T] {
 	for _, value := range values {
-		s.Push(&value)
+		s.Push(value)
 	}
+	return s
+}
+
+func (s *Stack[T]) Clear() *Stack[T] {
+	s.top = nil
+	s.length = 0
 	return s
 }

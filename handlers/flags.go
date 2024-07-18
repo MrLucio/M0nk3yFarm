@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/MrLucio/M0nk3yFarm/config"
-	constants "github.com/MrLucio/M0nk3yFarm/config/constants"
+	"github.com/MrLucio/M0nk3yFarm/app/hermes"
 	"github.com/MrLucio/M0nk3yFarm/database"
 	"github.com/MrLucio/M0nk3yFarm/structs"
 	"github.com/MrLucio/M0nk3yFarm/utils"
@@ -20,7 +18,14 @@ import (
 // @Success 200 {string} string "flags"
 // @Router / [get]
 func HandleFlags(c *fiber.Ctx) error {
-	flags := utils.GetFlags()
+	pagination := structs.Pagination{
+		Page:    0,
+		PerPage: 100,
+		SortBy:  structs.FilterEntry{Field: "created_at", Value: "desc"},
+	}
+	filter := structs.FlagFilter{}
+
+	flags := utils.GetFlags(pagination, filter)
 
 	return c.JSON(flags)
 }
@@ -31,42 +36,41 @@ func HandleFlags(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Success 200 {string} string "flags"
-// @Router / [get]
+// @Router / [post]
 func HandleFlagsAdd(c *fiber.Ctx) error {
-	flag := &structs.Flag{
-		Flag:   c.Query("flag"),
-		Sploit: c.Query("sploit"),
-	}
-
-	if errs := utils.Validate(flag); len(errs) > 0 && errs[0].Error {
-		errMsgs := make([]string, 0)
-
-		for _, err := range errs {
-			errMsgs = append(errMsgs, fmt.Sprintf(
-				"Error with field %s",
-				err.FailedField,
-			))
-		}
-
-		return &fiber.Error{
-			Code:    fiber.ErrBadRequest.Code,
-			Message: strings.Join(errMsgs, "\n"),
-		}
-	}
-
-	database.Db.Exec("INSERT INTO flags (flag, sploit) VALUES (?, ?)", flag.Flag, flag.Sploit)
-	constants.FlagChannel <- flag
-
-	return c.JSON(flag)
-}
-
-func HandleFlagsSubmit(c *fiber.Ctx) error {
-	flags := utils.GetFlags()
-
-	err := config.Config.Protocol.SubmitFlags(config.Config.URL, flags)
+	flags := new(structs.Flags)
+	err := c.BodyParser(flags)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
+	parameters := make([]interface{}, len(flags.Flags)*4)
+
+	for index, flag := range flags.Flags {
+		parameters[index*4] = flag.Flag
+		parameters[index*4+1] = flag.Sploit
+		parameters[index*4+2] = flag.Team
+		parameters[index*4+3] = "queued"
+	}
+
+	database.Db.Exec(
+		"INSERT INTO flags (flag, sploit, team, status) VALUES "+database.CreateParameterString(
+			len(flags.Flags),
+			4,
+		),
+		parameters...,
+	)
+
+	for _, flag := range flags.Flags {
+		hermes.Hermes.EnqueueFlag(flag)
+	}
+
 	return c.JSON(flags)
+}
+
+func HandleFlagsSubmit(c *fiber.Ctx) error {
+	hermes.Hermes.SubmitFlags()
+
+	return c.SendString("OK")
 }

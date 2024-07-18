@@ -7,8 +7,12 @@ import (
 	"github.com/MrLucio/M0nk3yFarm/structs"
 )
 
-func GetFlags() []structs.Flag {
-	rows, err := database.Db.Query("SELECT * FROM flags LIMIT 10")
+func GetFlags(pagination structs.Pagination, filter structs.FlagFilter) []structs.Flag {
+	rows, err := database.Db.Query(
+		"SELECT flag, sploit, team, status, response, updated_at FROM flags ORDER BY created_at DESC LIMIT ? OFFSET ?;",
+		pagination.PerPage,
+		pagination.Page*pagination.PerPage,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -18,7 +22,14 @@ func GetFlags() []structs.Flag {
 
 	for rows.Next() {
 		var flag structs.Flag
-		err = rows.Scan(&flag.Flag, &flag.Sploit, &flag.Team, &flag.Time, &flag.Status)
+		err = rows.Scan(
+			&flag.Flag,
+			&flag.Sploit,
+			&flag.Team,
+			&flag.Status,
+			&flag.Response,
+			&flag.Time,
+		)
 		if err != nil {
 			log.Fatal(err)
 		}

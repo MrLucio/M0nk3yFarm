@@ -52,9 +52,10 @@ func Setup() error {
 }
 
 func SetupWorkers() {
-	mu := sync.Mutex{}
-	syncList := stack.SyncStack[structs.Flag]{}
-	sem := semaphore.New(0)
-	go hermes.Setup(&mu, sem, &syncList)
-	go athena.Setup(&mu, sem, &syncList)
+	var mu = sync.Mutex{}
+	var syncStack = stack.SyncStack[structs.Flag]{}
+	var sem = semaphore.New(0)
+
+	hermes.New(&mu, sem, &syncStack)
+	go athena.New(&mu, sem, &syncStack).Start()
 }

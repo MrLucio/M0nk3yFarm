@@ -12,14 +12,14 @@ var CCIT_AD = structs.Protocol{
 	SubmitFlags: SubmitFlags,
 }
 
-func SubmitFlags(URL string, flags []structs.Flag) error {
+func SubmitFlags(URL string, flags []structs.Flag) ([]structs.Flag, error) {
 	var flagList []string
 	for _, f := range flags {
 		flagList = append(flagList, f.Flag)
 	}
 	jsonData, err := json.Marshal(flagList)
 	if err != nil {
-		return err
+		return []structs.Flag{}, err
 	}
 
 	agent := fiber.AcquireAgent()
@@ -37,16 +37,26 @@ func SubmitFlags(URL string, flags []structs.Flag) error {
 
 	// Response
 	if err := agent.Parse(); err != nil {
-		return err
+		return []structs.Flag{}, err
 	}
 
 	_, body, _ := agent.Bytes()
 
 	// TODO: Handle errors
-
-	return ProcessResponse(body)
+	return ProcessResponse(body, flags)
 }
 
-func ProcessResponse(response []byte) error {
-	return nil
+func ProcessResponse(response []byte, flags []structs.Flag) ([]structs.Flag, error) {
+	var result []structs.Flag
+
+	/* for _, flag := range response {
+		result = append(result, structs.Flag{Flag: flag})
+	} */
+	for _, flag := range flags {
+		flag.Status = "submitted"
+		result = append(result, flag)
+	}
+
+	// TODO: Handle errors
+	return result, nil
 }
