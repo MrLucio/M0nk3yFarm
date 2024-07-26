@@ -13,6 +13,7 @@ import (
 	"github.com/MrLucio/M0nk3yFarm/structs/semaphore"
 	stack "github.com/MrLucio/M0nk3yFarm/structs/stack"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
@@ -41,6 +42,9 @@ func Setup() error {
 
 	// Setup the recover middleware
 	app.Use(recover.New())
+
+	// Setup CORS
+	app.Use(cors.New())
 
 	// Setup the router
 	router.AddRoutes(app)

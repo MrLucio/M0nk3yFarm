@@ -31,7 +31,7 @@ func HandleAuth(c *fiber.Ctx) error {
 	}
 
 	// Check if the credentials are valid
-	credentials := fmt.Sprintf("%s:%s", "Cyb3rM0nk3ys", os.Getenv("SERVER_PASSWORD"))
+	credentials := fmt.Sprintf("%s:%s", os.Getenv("SERVER_USERNAME"), os.Getenv("SERVER_PASSWORD"))
 	if strings.Compare(string(decoded), credentials) != 0 {
 		return HandleAuthForbidden(c)
 	}
