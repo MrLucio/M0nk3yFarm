@@ -11,6 +11,7 @@ func AddRoutes(app *fiber.App) {
 
 	// Add Flags routes
 	AddFlagsRoutes(auth)
+	AddConfigRoutes(auth)
 
 	// Add Swagger routes
 	AddSwaggerRoutes(app)

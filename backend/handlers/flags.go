@@ -40,11 +40,11 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 	flags := new(structs.Flags)
 
 	if err := c.BodyParser(&flags); err != nil || len(flags.Flags) == 0 {
-		return c.SendStatus(400)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	if errs := utils.Validate(flags); len(errs) > 0 {
-		return c.SendStatus(400)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	parameters := make([]interface{}, len(flags.Flags)*4)
@@ -68,7 +68,7 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 		hermes.Hermes.EnqueueFlag(flag)
 	}
 
-	return c.SendStatus(204)
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 // @Summary Submit flags
@@ -80,8 +80,8 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 // @Router /flags/submit [post]
 func HandleFlagsSubmit(c *fiber.Ctx) error {
 	if err := hermes.Hermes.SubmitFlags(); err != nil {
-		return c.SendStatus(424)
+		return c.SendStatus(fiber.StatusFailedDependency)
 	}
 
-	return c.SendStatus(204)
+	return c.SendStatus(fiber.StatusNoContent)
 }
