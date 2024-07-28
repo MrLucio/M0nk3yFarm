@@ -15,14 +15,18 @@ import (
 // @Security		BasicAuth
 // @Router /flags [get]
 func HandleFlags(c *fiber.Ctx) error {
-	pagination := structs.Pagination{
-		Page:    0,
-		PerPage: 100,
-		SortBy:  structs.FilterEntry{Field: "created_at", Value: "desc"},
+	pagination := new(structs.Pagination)
+
+	if err := c.QueryParser(pagination); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
+
+	pagination.PerPage = 100
+	pagination.SortBy = structs.FilterEntry{Field: "created_at", Value: "desc"}
+
 	filter := structs.FlagFilter{}
 
-	flags := utils.GetFlags(pagination, filter)
+	flags := utils.GetFlags(*pagination, filter)
 
 	return c.JSON(flags)
 }
