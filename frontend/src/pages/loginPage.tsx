@@ -1,4 +1,4 @@
-import { LocaleText } from '@/components/localeText'
+import { LocaleText } from '@/components/common/localeText'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {

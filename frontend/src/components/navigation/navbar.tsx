@@ -1,10 +1,10 @@
 import { Component } from 'solid-js'
-import { LocaleText } from '../localeText'
-import ThemeToggle from '../themeToggle'
 import LogOut from 'lucide-solid/icons/log-out'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { logout } from '@/stores/auth'
-import LocaleSelect from '../localeSelect'
+import { LocaleText } from '@/components/common/localeText'
+import ThemeToggle from '@/components/common/themeToggle'
+import LocaleSelect from '@/components/common/localeSelect'
 
 const Navbar: Component = () => {
     // Render

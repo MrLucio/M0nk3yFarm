@@ -1,4 +1,4 @@
-import { LocaleText } from '@/components/localeText'
+import { LocaleText } from '@/components/common/localeText'
 import { Flag, TableColumn, TableConfig } from '@/types/structs'
 import ArrowDownAZ from 'lucide-solid/icons/arrow-down-a-z'
 import ArrowUpAZ from 'lucide-solid/icons/arrow-up-a-z'

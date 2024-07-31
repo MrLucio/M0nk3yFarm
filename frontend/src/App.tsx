@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js'
 import { Toaster } from '@/components/ui/sonner'
-import Navigation from './components/navigation'
+import Navigation from '@/components/navigation'
 import { ColorModeProvider } from '@kobalte/core/color-mode'
 
 const App: Component = () => {

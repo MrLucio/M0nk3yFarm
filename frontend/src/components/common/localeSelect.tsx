@@ -5,7 +5,7 @@ import {
     SelectContent,
     SelectItem,
     SelectValue,
-} from './ui/select'
+} from '@/components/ui/select'
 import { DropdownOption } from '@/types/structs'
 import { locale, setLocale } from '@/stores/locale'
 import { Locale } from '@/config/enums'

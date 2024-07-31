@@ -5,12 +5,12 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '../ui/dialog'
+} from '@/components/ui/dialog'
 import { createEffect, createSignal, splitProps } from 'solid-js'
 import { DialogRootOptions } from '@kobalte/core/dialog'
-import { TextField, TextFieldRoot } from '../ui/textfield'
-import { LocaleText } from '../localeText'
-import { Button } from '../ui/button'
+import { TextField, TextFieldRoot } from '@/components/ui/textfield'
+import { LocaleText } from '@/components/common/localeText'
+import { Button } from '@/components/ui/button'
 import useTranslation from '@/locale'
 
 type AddFlagDialogProps = {
@@ -62,7 +62,7 @@ const AddFlagDialog = (props: AddFlagDialogProps) => {
                             <TextField
                                 name="flags"
                                 type="text"
-                                placeholder={t('flags.flag')}
+                                placeholder={t('flags.addFlagsPlaceholder')}
                                 value={flags()}
                                 onInput={(e) => setFlags(e.currentTarget.value)}
                             />

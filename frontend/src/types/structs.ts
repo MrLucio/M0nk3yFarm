@@ -1,4 +1,4 @@
-import { localeTextProps } from '@/components/localeText'
+import { localeTextProps } from '@/components/common/localeText'
 import { JSX } from 'solid-js'
 
 type JoinPath<A, B> = A extends string | number

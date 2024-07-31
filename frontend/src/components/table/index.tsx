@@ -9,9 +9,9 @@ import {
     PaginationItems,
     PaginationNext,
     PaginationPrevious,
-} from '../ui/pagination'
+} from '@/components/ui/pagination'
 
-type ListProps<T, U extends TableConfig<T> = TableConfig<T>> = {
+export type TableProps<T, U extends TableConfig<T> = TableConfig<T>> = {
     data: T[]
     config: U
     pages?: number
@@ -19,9 +19,9 @@ type ListProps<T, U extends TableConfig<T> = TableConfig<T>> = {
     onSortChange?: (sort: U['columns'][number]['key']) => void
 }
 
-const Table = <T,>(props: ListProps<T>) => {
+const Table = <T,>(props: TableProps<T>) => {
     // Props
-    const [local, rest] = splitProps(props as ListProps<T>, [
+    const [local, rest] = splitProps(props as TableProps<T>, [
         'data',
         'config',
         'pages',

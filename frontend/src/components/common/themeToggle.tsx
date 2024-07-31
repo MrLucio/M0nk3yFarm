@@ -1,8 +1,8 @@
 import { useColorMode } from '@kobalte/core/color-mode'
 import { Component } from 'solid-js'
-import { Button } from './ui/button'
 import Sun from 'lucide-solid/icons/sun'
 import Moon from 'lucide-solid/icons/moon'
+import { Button } from '@/components/ui/button'
 
 const ThemeToggle: Component = () => {
     // Hooks

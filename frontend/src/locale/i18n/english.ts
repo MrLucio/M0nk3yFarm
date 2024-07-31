@@ -24,6 +24,8 @@ const en = {
         addFlags: 'Add flags',
         addFlagsDescription:
             'Add one or more flags. Type all flags separated by a semicolon.',
+        addFlagsPlaceholder: 'flag1;flag2;flag3;...',
+        fetchError: 'Failed to fetch flags',
     },
 }
 
