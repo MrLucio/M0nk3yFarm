@@ -59,8 +59,8 @@ func ComposeQuerySelector(filter structs.Filter, pagination structs.Pagination) 
 			stmts,
 			fmt.Sprintf(
 				"LIMIT %d OFFSET %d",
-				pagination.PerPage,
-				(pagination.Page-1)*pagination.PerPage,
+				pagination.Limit,
+				(pagination.Page-1)*pagination.Limit,
 			),
 		)
 	}

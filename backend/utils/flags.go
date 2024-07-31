@@ -18,8 +18,8 @@ func GetFlags(pagination structs.Pagination, filter structs.FlagsFilter) []struc
 			"SELECT flag, sploit, team, status, response, updated_at FROM flags ORDER BY %s LIMIT ? OFFSET ?;",
 			pagination.Sort,
 		),
-		pagination.PerPage,
-		pagination.Page*pagination.PerPage,
+		pagination.Limit,
+		pagination.Page*pagination.Limit,
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +49,7 @@ func GetFlags(pagination structs.Pagination, filter structs.FlagsFilter) []struc
 
 func GetFlagsStats() structs.FlagsStats {
 	rows, err := database.Db.Query(
-		"SELECT COUNT(*), COUNT(*) FILTER (WHERE status = 'queued'), COUNT(*) FILTER (WHERE status = 'success') FROM flags;",
+		"SELECT COUNT(*), COUNT(*) FILTER (WHERE status = 'queued'), COUNT(*) FILTER (WHERE status = 'success'), COUNT(*) FILTER (WHERE status = 'failed') FROM flags;",
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -59,7 +59,7 @@ func GetFlagsStats() structs.FlagsStats {
 	var stats structs.FlagsStats
 
 	for rows.Next() {
-		err = rows.Scan(&stats.Flags, &stats.Queued, &stats.Success)
+		err = rows.Scan(&stats.Flags, &stats.Queued, &stats.Success, &stats.Failed)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,12 +91,18 @@ func ParsePagination(c *fiber.Ctx, pagination *structs.Pagination) error {
 			}
 			sorts = append(sorts, fmt.Sprintf("%s %s", match[1], match[2]))
 		default:
-			log.Println(match)
 			return fmt.Errorf("invalid sort")
 		}
 	}
 
-	pagination.PerPage = 10
+	switch pagination.Limit {
+	case 0:
+		pagination.Limit = 10
+	case 5, 10:
+	default:
+		return fmt.Errorf("invalid limit")
+	}
+
 	if len(sorts) == 0 {
 		pagination.Sort = "created_at desc"
 	} else {

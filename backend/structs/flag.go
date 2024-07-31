@@ -28,6 +28,7 @@ type FlagsStats struct {
 	Flags   int `json:"flags"`
 	Queued  int `json:"queued"`
 	Success int `json:"success"`
+	Failed  int `json:"failed"`
 }
 
 type FlagsResponse struct {

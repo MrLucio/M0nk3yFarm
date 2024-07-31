@@ -8,7 +8,7 @@ type FilterEntry struct {
 type Filter []FilterEntry
 
 type Pagination struct {
-	Page    int    `json:"page"`
-	PerPage int    `json:"per_page"`
-	Sort    string `json:"sort"`
+	Page  int    `json:"page"`
+	Limit int    `json:"limit"`
+	Sort  string `json:"sort"`
 }
