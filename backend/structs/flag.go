@@ -15,12 +15,22 @@ type Flags struct {
 	Flags []Flag `json:"flags" validate:"required,dive,required"`
 }
 
-type FlagFilter struct {
-	Filter
+type FlagsFilter struct {
 	Flag   string `json:"flag"`
 	Sploit string `json:"sploit"`
 	Team   string `json:"team"`
 	Before int    `json:"before"`
 	After  int    `json:"after"`
 	Status string `json:"status"`
+}
+
+type FlagsStats struct {
+	Flags   int `json:"flags"`
+	Queued  int `json:"queued"`
+	Success int `json:"success"`
+}
+
+type FlagsResponse struct {
+	FlagsStats FlagsStats `json:"stats"`
+	Flags      []Flag     `json:"flags"`
 }

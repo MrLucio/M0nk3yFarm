@@ -8,7 +8,11 @@ import (
 )
 
 func AddFlagsRoutes(app fiber.Router) {
+	// GET
 	app.Get("/flags", handlers.HandleFlags)
+	app.Get("/flags/stats", handlers.HandleFlagsStats)
+
+	// POST
 	app.Post("/flags", handlers.HandleFlagsAdd)
 	app.Post("/flags/submit", handlers.HandleFlagsSubmit)
 }

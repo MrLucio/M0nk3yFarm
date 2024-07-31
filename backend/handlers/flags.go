@@ -11,24 +11,29 @@ import (
 // @Summary Get last 100 flags
 // @Tags Flags
 // @Produce json
-// @Success 200 {object} []structs.Flag "Flags"
+// @Success 200 {object} []structs.FlagsResponse "Flags response"
+// @Failure 400
+// @Failure 403
 // @Security		BasicAuth
 // @Router /flags [get]
 func HandleFlags(c *fiber.Ctx) error {
 	pagination := new(structs.Pagination)
+	filter := new(structs.FlagsFilter)
 
-	if err := c.QueryParser(pagination); err != nil {
+	if err := utils.ParsePagination(c, pagination); err != nil {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	pagination.PerPage = 100
-	pagination.SortBy = structs.FilterEntry{Field: "created_at", Value: "desc"}
+	if err := c.QueryParser(filter); err != nil {
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
 
-	filter := structs.FlagFilter{}
+	flags := utils.GetFlags(*pagination, *filter)
+	stats := utils.GetFlagsStats()
 
-	flags := utils.GetFlags(*pagination, filter)
+	flagsResponse := structs.FlagsResponse{FlagsStats: stats, Flags: flags}
 
-	return c.JSON(flags)
+	return c.JSON(flagsResponse)
 }
 
 // @Summary Add flags
@@ -38,6 +43,7 @@ func HandleFlags(c *fiber.Ctx) error {
 // @Produce json
 // @Success 204
 // @Failure 400
+// @Failure 403
 // @Security		BasicAuth
 // @Router /flags [post]
 func HandleFlagsAdd(c *fiber.Ctx) error {
@@ -75,11 +81,25 @@ func HandleFlagsAdd(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// @Summary Get flags stats
+// @Tags Flags
+// @Produce json
+// @Success 200 {object} structs.FlagsStats
+// @Failure 403
+// @Security		BasicAuth
+// @Router /flags/stats [get]
+func HandleFlagsStats(c *fiber.Ctx) error {
+	stats := utils.GetFlagsStats()
+
+	return c.JSON(stats)
+}
+
 // @Summary Submit flags
 // @Tags Flags
 // @Produce json
 // @Success 204
 // @Failure 424
+// @Failure 403
 // @Security		BasicAuth
 // @Router /flags/submit [post]
 func HandleFlagsSubmit(c *fiber.Ctx) error {

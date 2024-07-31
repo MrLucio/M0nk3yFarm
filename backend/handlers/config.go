@@ -5,6 +5,7 @@ import (
 )
 
 // @Summary
+// @Tags Config
 // @Produce json
 // @Success 204
 // @Failure 403
