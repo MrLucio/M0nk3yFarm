@@ -26,6 +26,12 @@ const en = {
             'Add one or more flags. Type all flags separated by a semicolon.',
         addFlagsPlaceholder: 'flag1;flag2;flag3;...',
         fetchError: 'Failed to fetch flags',
+        queued: 'Queued',
+        success: 'Success',
+        failed: 'Failed',
+    },
+    pagination: {
+        perPage: 'per page',
     },
 }
 

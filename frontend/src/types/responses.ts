@@ -1,10 +1,6 @@
-import { Flag } from './structs'
-
-export type StatsResponse = {
-    stats: number
-}
+import { Flag, Stats } from './structs'
 
 export type FlagsResponse = {
-    stats: StatsResponse
+    stats: Stats
     flags: Flag[]
 }

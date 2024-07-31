@@ -26,7 +26,8 @@ const Row = <T,>(props: RowProps<T>) => {
                         >
                             {column.renderer
                                 ? column.renderer(local.data)
-                                : (local.data[column.key] ?? '')}
+                                : ((local.data[column.key] ??
+                                      '') as JSX.Element)}
                         </Cell>
                     )
                 }}

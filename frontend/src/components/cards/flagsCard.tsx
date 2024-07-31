@@ -12,7 +12,7 @@ import RefreshCcw from 'lucide-solid/icons/refresh-ccw'
 import Plus from 'lucide-solid/icons/plus'
 import { Button } from '@/components/ui/button'
 import useTranslation from '@/locale'
-import { createMemo, createSignal } from 'solid-js'
+import { createMemo, createSignal, useContext } from 'solid-js'
 import { RefreshInterval } from '@/config/enums'
 import { createStore, produce } from 'solid-js/store'
 import { flagsTableConfig } from '@/config/tables'
@@ -23,6 +23,7 @@ import { authAxios } from '@/api/axios'
 import { FLAGS } from '@/config/endpoints'
 import { toast } from 'solid-sonner'
 import FlagsTable from '@/components/tables/flagsTable'
+import { FlagsContext } from '../providers/FlagsProvider'
 
 const refreshIntervals: DropdownOption<RefreshInterval>[] = [
     { value: RefreshInterval.OFF, label: 'Off' },
@@ -42,6 +43,7 @@ const refreshIntervals: DropdownOption<RefreshInterval>[] = [
 function FlagsCard() {
     // Hooks
     const { t } = useTranslation()
+    const { setFlags, setStats } = useContext(FlagsContext)
 
     // Signals
     const [value, setValue] = createSignal(
@@ -73,9 +75,7 @@ function FlagsCard() {
             .join(',')
     })
 
-    const onPageChange = (page: number) => {
-        setTableConfig({ page })
-    }
+    const onPageChange = (page: number) => setTableConfig({ page })
 
     const onSortChange = (x: string) => {
         setTableConfig(
@@ -94,19 +94,26 @@ function FlagsCard() {
         )
     }
 
+    const onLimitChange = (limit: number) => {
+        setTableConfig({ limit })
+    }
+
     // Queries
     const flagsQuery = createQuery<FlagsResponse>(() => ({
         queryKey: ['flags', tableConfig],
         queryFn: async () => {
             return authAxios
-                .get(FLAGS, {
+                .get<FlagsResponse>(FLAGS, {
                     params: {
                         page: (tableConfig.page ?? 1) - 1,
                         sort: sortOptions(),
+                        limit: tableConfig.limit ?? 5,
                     },
                 })
                 .then((res) => res.data)
                 .then((data) => {
+                    setFlags(data.flags)
+                    setStats(data.stats)
                     return data
                 })
                 .catch((err) => {
@@ -124,7 +131,7 @@ function FlagsCard() {
     // Render
     return (
         <>
-            <Card class="w-3/4">
+            <Card class="w-4/5">
                 <CardHeader class="p-4 pb-0 items-end">
                     <div class="flex items-center">
                         <Button
@@ -173,6 +180,7 @@ function FlagsCard() {
                         pages={30}
                         onPageChange={onPageChange}
                         onSortChange={onSortChange}
+                        onLimitChange={onLimitChange}
                     />
                 </CardContent>
             </Card>

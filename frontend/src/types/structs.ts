@@ -25,7 +25,7 @@ export type TableConfig<T = any> = {
     columns: TableColumn<T>[]
     page?: number
     pages?: number
-    entriesPerPage?: number
+    limit?: number
 }
 
 export type TableColumn<T = any> = {
@@ -51,4 +51,11 @@ export type Flag = {
     time: string
     response: string
     status: string
+}
+
+export type Stats = {
+    flags: number
+    queued: number
+    success: number
+    failed: number
 }

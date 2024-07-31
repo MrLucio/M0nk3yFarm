@@ -34,5 +34,5 @@ export const flagsColumns: TableColumn<Flag>[] = [
 
 export const flagsTableConfig: TableConfig<Flag> = genericTableConfig && {
     columns: flagsColumns,
-    entriesPerPage: 10,
+    limit: 5,
 }

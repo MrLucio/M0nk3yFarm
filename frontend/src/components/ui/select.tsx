@@ -19,7 +19,7 @@ export const SelectHiddenSelect = SelectPrimitive.HiddenSelect
 export const SelectSection = SelectPrimitive.Section
 
 type selectTriggerProps<T extends ValidComponent = 'button'> = ParentProps<
-    SelectTriggerProps<T> & { class?: string }
+    SelectTriggerProps<T> & { class?: string; hideIcon?: boolean }
 >
 
 export const SelectButtonTrigger = <T extends ValidComponent = 'button'>(
@@ -52,6 +52,7 @@ export const SelectTrigger = <T extends ValidComponent = 'button'>(
     const [local, rest] = splitProps(props as selectTriggerProps, [
         'class',
         'children',
+        'hideIcon',
     ])
 
     // Render
@@ -64,23 +65,25 @@ export const SelectTrigger = <T extends ValidComponent = 'button'>(
             {...rest}
         >
             {local.children}
-            <SelectPrimitive.Icon
-                as="svg"
-                xmlns="http://www.w3.org/2000/svg"
-                width="1em"
-                height="1em"
-                viewBox="0 0 24 24"
-                class="flex size-4 items-center justify-center opacity-50"
-            >
-                <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m8 9l4-4l4 4m0 6l-4 4l-4-4"
-                />
-            </SelectPrimitive.Icon>
+            {!local.hideIcon && (
+                <SelectPrimitive.Icon
+                    as="svg"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    class="flex size-4 items-center justify-center opacity-50"
+                >
+                    <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m8 9l4-4l4 4m0 6l-4 4l-4-4"
+                    />
+                </SelectPrimitive.Icon>
+            )}
         </SelectPrimitive.Trigger>
     )
 }
