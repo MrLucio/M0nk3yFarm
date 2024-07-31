@@ -3,6 +3,7 @@ const en = {
         cancel: 'Cancel',
         save: 'Save',
         submit: 'Submit',
+        title: 'Title',
     },
     navbar: {
         title: '🍌 M0nk3yFarm',

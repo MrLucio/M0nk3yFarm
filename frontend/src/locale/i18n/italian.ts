@@ -5,6 +5,7 @@ const it: RawDictionary = {
         cancel: 'Annulla',
         save: 'Salva',
         submit: 'Invia',
+        title: 'Titolo',
     },
     navbar: {
         title: '🍌 M0nk3yFarm',

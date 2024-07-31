@@ -1,3 +1,4 @@
+import { localeTextProps } from '@/components/localeText'
 import { JSX } from 'solid-js'
 
 type JoinPath<A, B> = A extends string | number
@@ -22,13 +23,17 @@ type Flatten<T = any> = (
 
 export type TableConfig<T = any> = {
     columns: TableColumn<T>[]
+    page?: number
+    pages?: number
+    entriesPerPage?: number
 }
 
 export type TableColumn<T = any> = {
-    title: string
+    title: localeTextProps['text']
     key: Flatten<T>
+    sort?: 'asc' | 'desc'
     sortable?: boolean
-    headerRenderer?: (value: any) => JSX.Element
+    headerRenderer?: (column: TableColumn<T>) => JSX.Element
     renderer?: (value: any) => JSX.Element
     compare?: (a: T, b: T) => number
 }

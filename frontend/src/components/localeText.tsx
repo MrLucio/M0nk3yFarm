@@ -24,7 +24,7 @@ export const localeTextVariants = cva('text-sm font-medium', {
     },
 })
 
-type localeTextProps<T extends keyof Dictionary> = {
+export type localeTextProps<T extends keyof Dictionary = keyof Dictionary> = {
     text: T
     textArgs?: ResolveArgs<Dictionary[T], string>
     as?: keyof JSX.IntrinsicElements

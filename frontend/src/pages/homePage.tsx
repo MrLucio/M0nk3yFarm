@@ -1,8 +1,8 @@
 import { authAxios } from '@/api/axios'
 import { FLAGS } from '@/config/endpoints'
-import { createQuery } from '@tanstack/solid-query'
+import { createQuery, keepPreviousData } from '@tanstack/solid-query'
 import { Component, createMemo, createSignal } from 'solid-js'
-import { DropdownOption, Flag } from '@/types/structs'
+import { DropdownOption, Flag, TableConfig } from '@/types/structs'
 import { flagsTableConfig } from '@/config/tables'
 import Table from '@/components/table'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -19,7 +19,8 @@ import {
 } from '@/components/ui/select'
 import { config, setConfig } from '@/stores/config'
 import AddFlagDialog from '@/components/dialogs/addFlagDialog'
-import { FLAGS_SEPARATOR } from '@/config/constants'
+import { FlagsResponse } from '@/types/responses'
+import { createStore, produce } from 'solid-js/store'
 
 const refreshIntervals: DropdownOption<RefreshInterval>[] = [
     { value: RefreshInterval.OFF, label: 'Off' },
@@ -42,6 +43,8 @@ const HomePage: Component = () => {
         refreshIntervals.find((r) => r.value === config.refreshInterval) ??
             refreshIntervals[0]
     )
+    const [tableConfig, setTableConfig] =
+        createStore<TableConfig<Flag>>(flagsTableConfig)
     const [addDialogOpen, setAddDialogOpen] = createSignal(false)
 
     // Methods
@@ -54,21 +57,59 @@ const HomePage: Component = () => {
         parseInt(value().value.toString())
     )
 
+    const sortOptions = createMemo<string>(() => {
+        return tableConfig.columns
+            .reduce<string[]>((acc, column) => {
+                if (column.sort) {
+                    return [...acc, `${column.key}.${column.sort}`]
+                }
+                return acc
+            }, [])
+            .join(',')
+    })
+
+    const onPageChange = (page: number) => {
+        setTableConfig({ page })
+    }
+
+    const onSortChange = (x: string) => {
+        setTableConfig(
+            produce((state) => {
+                state.columns.find((column) => {
+                    if (column.key === x) {
+                        column.sort =
+                            column.sort === undefined
+                                ? 'asc'
+                                : column.sort === 'asc'
+                                  ? 'desc'
+                                  : undefined
+                    }
+                })
+            })
+        )
+    }
+
     // Queries
-    const flagsQuery = createQuery<Flag[]>(() => ({
-        queryKey: ['flags'],
+    const flagsQuery = createQuery<FlagsResponse>(() => ({
+        queryKey: ['flags', tableConfig],
         queryFn: async () => {
             return authAxios
-                .get(FLAGS)
+                .get(FLAGS, {
+                    params: {
+                        page: (tableConfig.page ?? 1) - 1,
+                        sort: sortOptions(),
+                    },
+                })
                 .then((res) => res.data)
                 .then((data) => {
                     return data
                 })
         },
         select(data) {
-            return data.sort(() => 0.5 - Math.random()) //.sort((a, b) => a.time.localeCompare(b.time))
+            return data
         },
-        refetchInterval: isNaN(refreshInterval()) ? false : refreshInterval(), // NaN when OFF
+        refetchInterval: isNaN(refreshInterval()) ? false : refreshInterval(),
+        placeholderData: keepPreviousData,
     }))
 
     // Render
@@ -126,8 +167,11 @@ const HomePage: Component = () => {
                     </CardHeader>
                     <CardContent class="p-4">
                         <Table<Flag>
-                            data={flagsQuery.data ?? []}
-                            config={flagsTableConfig}
+                            data={flagsQuery.data?.flags ?? []}
+                            config={tableConfig}
+                            pages={30}
+                            onPageChange={onPageChange}
+                            onSortChange={onSortChange}
                         />
                     </CardContent>
                 </Card>
