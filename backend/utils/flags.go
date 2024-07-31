@@ -16,7 +16,7 @@ func GetFlags(pagination structs.Pagination, filter structs.FlagsFilter) []struc
 	rows, err := database.Db.Query(
 		fmt.Sprintf(
 			"SELECT flag, sploit, team, status, response, updated_at FROM flags ORDER BY %s LIMIT ? OFFSET ?;",
-			pagination.Order,
+			pagination.Sort,
 		),
 		pagination.PerPage,
 		pagination.Page*pagination.PerPage,
@@ -74,29 +74,33 @@ func ParsePagination(c *fiber.Ctx, pagination *structs.Pagination) error {
 	}
 
 	var re = regexp.MustCompile(`(?m)(?:([a-zA-Z_]+)\.(asc|desc))`)
-	var str = c.Query("order")
-	var orders []string
+	var str = c.Query("sort")
+	var sorts []string
 
 	for _, match := range re.FindAllStringSubmatch(str, -1) {
 		switch match[1] {
-		case "flag", "team", "sploit", "created_at":
-			if slices.ContainsFunc(orders, func(s string) bool {
+		case "flag", "sploit", "team", "status", "time":
+			if match[1] == "time" {
+				match[1] = "created_at"
+			}
+
+			if slices.ContainsFunc(sorts, func(s string) bool {
 				return strings.HasPrefix(s, match[1])
 			}) {
-				return fmt.Errorf("duplicate order")
+				return fmt.Errorf("duplicate sort")
 			}
-			orders = append(orders, fmt.Sprintf("%s %s", match[1], match[2]))
+			sorts = append(sorts, fmt.Sprintf("%s %s", match[1], match[2]))
 		default:
 			log.Println(match)
-			return fmt.Errorf("invalid order")
+			return fmt.Errorf("invalid sort")
 		}
 	}
 
 	pagination.PerPage = 10
-	if len(orders) == 0 {
-		pagination.Order = "created_at desc"
+	if len(sorts) == 0 {
+		pagination.Sort = "created_at desc"
 	} else {
-		pagination.Order = strings.Join(orders, ", ")
+		pagination.Sort = strings.Join(sorts, ", ")
 	}
 
 	return nil
